@@ -1,0 +1,42 @@
+{
+  "name": "@magpie-community/opencode-ima-auth",
+  "version": "0.1.0",
+  "description": "Tencent IMA Copilot as a magpie/OpenCode provider — copilot task mode (MiMo/GLM/Kimi/MiniMax) + knowledge-base Q&A + daily credit check-in.",
+  "type": "module",
+  "main": "./index.mjs",
+  "exports": {
+    ".": "./index.mjs"
+  },
+  "files": [
+    "index.mjs",
+    "README.md",
+    "LICENSE"
+  ],
+  "keywords": [
+    "magpie",
+    "magpie-community",
+    "opencode",
+    "opencode-plugin",
+    "opencode-auth",
+    "ima",
+    "tencent",
+    "copilot"
+  ],
+  "license": "MIT",
+  "magpie": {
+    "providers": [
+      "ima"
+    ],
+    "maxConcurrency": 1
+  },
+  "engines": {
+    "bun": ">=1.0.0"
+  },
+  "scripts": {
+    "test": "bun test index.test.mjs"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/liuxigreen/opencode-ima-auth.git"
+  }
+}
