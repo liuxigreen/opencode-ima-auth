@@ -448,7 +448,14 @@ export const ImaPlugin = async ({ client }, options) => {
     const rt = auth.refresh || cookieVal(auth.key, "IMA-REFRESH-TOKEN") || cookieVal(auth.key, "IMA-TOKEN")
     try {
       const { token, validFor } = await refreshAccessToken({ cookie: auth.key, userId: uid, refreshToken: rt })
-      const next = { ...auth, access: token, expires: Date.now() + Math.max(0, validFor - 300) * 1000 }
+      // 关键：把新 token 写回 cookie（auth.key），否则 init_session / QA 仍用旧 token → 600001
+      const freshKey = withFreshToken(auth.key, token)
+      const next = {
+        ...auth,
+        key: freshKey,
+        access: token,
+        expires: Date.now() + Math.max(0, validFor - 300) * 1000,
+      }
       try {
         await client.auth.set({ path: { id: PROVIDER }, body: next })
       } catch { /* keep going */ }
@@ -701,7 +708,7 @@ export const ImaPlugin = async ({ client }, options) => {
           baseURL: `${BASE}${PREFIX}/task_assistant`,
           async fetch(input, init = {}) {
             let auth = await getAuth()
-            if (!auth || auth.type !== "api" || !auth.key) {
+            if (!auth || !auth.key) {
               return jsonError(401, "IMA 未登录：请先执行 magpie plugin login ima")
             }
             let req
